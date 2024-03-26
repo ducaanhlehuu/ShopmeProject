@@ -66,15 +66,29 @@
       [[${message}]]
   </div>
   <br>
+
+  <div>
+    <form th:action="@{'/users/page/1'}" class="form-inline mb-3">
+      <input type="hidden" name="sortField" th:value="${sortField}">
+      <input type="hidden" name="sortDir" th:value="${sortDir}">
+      Filter:&nbsp;
+      <input type="search" style="max-width: 200px" name="keyword" id="keyword" th:value="${keyword}" required>
+      &nbsp;&nbsp;
+      <button type="submit" class="btn btn-primary m-1 ">Search</button>
+      &nbsp;&nbsp;
+      <button type="button" class="btn btn-secondary m-1" onclick="clearSearch()">Clear</button>
+    </form>
+
+  </div>
   <div>
     <table class="table table-responsive-xl table-hover table-striped table-bordered">
       <thead class="thead-dark">
         <tr class=>
-          <th>User ID</th>
+          <th th:replace="fragment:: column_change('id', 'User ID')"></th>
           <th>Photos</th>
-          <th>Email</th>
-          <th>First Name</th>
-          <th>Last Name</th>
+          <th th:replace="fragment:: column_change('email', 'Email')"></th>
+          <th th:replace="fragment:: column_change('firstName', 'First Name')"></th>
+          <th th:replace="fragment:: column_change('lastName', 'Last Name')"></th>
           <th>Role</th>
           <th>Enabled</th>
           <th></th>
@@ -109,28 +123,28 @@
       <span>Showing users #[[${startCount}]] to #[[${endCount}]] of [[${totalItems}]]</span>
     </div>
     <div class="text-center m-1" th:if="${page.numberOfElements}<=0">
-      <span class="alert-warning fa-2x">No user found!</span>
+      <span class="fa-2x">No user found!</span>
     </div>
 
-    <nav aria-label="Page navigation example">
+    <nav th:if="${page.numberOfElements>0}" aria-label="Page navigation example">
       <ul class="pagination justify-content-center">
         <li th:class="${currentPage<=1 ? 'page-item disabled': 'page-item'}">
-          <a class="page-link" th:href="@{'/users/page/' + 1}">First</a>
+          <a th:replace="fragment::page_link(1,'First')"></a>
         </li>
 
         <li th:class="${currentPage<=1 ? 'page-item disabled': 'page-item'}">
-          <a class="page-link" th:href="@{'/users/page/' + ${currentPage - 1}}">Previous</a>
+          <a th:replace="fragment::page_link(${currentPage} - 1,'Preveous')"></a>
         </li>
 
         <li th:class="${index!=currentPage ? 'page-item' : 'active page-item'}" th:each="index : ${#numbers.sequence(1,page.totalPages)}">
-          <a class="page-link" th:href="@{'/users/page/' + ${index}}">[[${index}]]</a>
+          <a th:replace="fragment::page_link(${index},${index})"></a>
         </li>
 
         <li th:class="${currentPage>=page.totalPages ? 'page-item disabled': 'page-item'}">
-          <a class="page-link" th:href="@{'/users/page/' + ${currentPage + 1}}">Next</a>
+          <a th:replace="fragment::page_link(${currentPage} + 1,'Next')"></a>
         </li>
         <li th:class="${currentPage>=page.totalPages ? 'page-item disabled': 'page-item'}">
-          <a class="page-link" th:href="@{'/users/page/' + ${page.totalPages}}">Last</a>
+          <a th:replace="fragment::page_link(${page.totalPages},'Last')"></a>
         </li>
       </ul>
     </nav>
@@ -170,7 +184,11 @@
         $("#modalBody").text("Are you sure to delete user ID: "+ user_id + "?");
         $("#modalDialog").modal();
       });
-  })
+  });
+  function clearSearch(){
+    window.location = "[[@{/users}]]";
+  }
+
 </script>
 </body>
 </html>

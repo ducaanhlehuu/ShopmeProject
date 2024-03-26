@@ -5,6 +5,7 @@ import com.shopme.admin.entity.Role;
 import com.shopme.admin.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -24,11 +25,8 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public String listAll(Model model){
-        List<User> listUsers = userService.listAll();
-        model.addAttribute("listUsers",listUsers);
-        model.addAttribute("currentNumber",0);
-        return "users";
+    public String listFirstPage(Model model){
+        return listPageByNumber(1,model,"id","asc",null);
     }
     @GetMapping("/users/new")
     public String getUserForm(Model model){
@@ -58,8 +56,8 @@ public class UserController {
             userService.saveUser(user);
         }
 
-        redirectAttributes.addFlashAttribute("message","The user has been saved successfully.");
-        return "redirect:/users";
+        String keyword = user.getEmail().replaceFirst("@.*","");
+        return "redirect:/users/page/1?sortField=Id&sortDir=asc&keyword=" + keyword;
     }
     @GetMapping("/users/update/{id}")
     public String updateUser(Model model,@PathVariable(name = "id") Integer user_id,RedirectAttributes redirectAttributes){
@@ -91,16 +89,27 @@ public class UserController {
     @GetMapping("/users/{id}/enabled/{status}")
     public String updateEnabledStatus(@PathVariable(name = "id") Integer id,
                                       @PathVariable(name = "status") boolean enabled,
-                                      RedirectAttributes redirectAttributes){
+                                      RedirectAttributes redirectAttributes) throws UserNotFoundException {
         userService.updateEnabledStatus(id,enabled);
         String message = "The user ID " + id + " has been " + (enabled?"enabled":"disabled");
         redirectAttributes.addFlashAttribute("message",message);
-        return "redirect:/users";
+        String keyword = userService.getUser(id).getEmail().replaceFirst("@.*","");
+        return "redirect:/users/page/1?sortField=Id&sortDir=asc&keyword=" + keyword;
     }
     @GetMapping("/users/page/{pageNum}")
-    public String listPageByNumber(@PathVariable(name = "pageNum") int pageNum,Model model){
+    public String listPageByNumber(@PathVariable(name = "pageNum") int pageNum, Model model,
+                                   @Param("sortField") String sortField,
+                                   @Param("sortDir") String sortDir,
+                                   @Param("keyword") String keyword){
+
         pageNum = pageNum<=0 ? 1 : pageNum;
-        Page<User> page = userService.listPageUser(pageNum);
+
+        System.out.println(sortField);
+        System.out.println(sortDir);
+        Page<User> page = userService.listPageUser(pageNum,sortField,sortDir,keyword);
+        page.getContent().forEach(p->{
+            System.out.println(p.toString());
+        });
         long startCount = (pageNum - 1) * userService.USER_PER_PAGE + 1;
         long endCount = Math.min(startCount + userService.USER_PER_PAGE - 1,page.getTotalElements());
 
@@ -109,6 +118,9 @@ public class UserController {
         model.addAttribute("currentPage",pageNum);
         model.addAttribute("listUsers",page.getContent());
         model.addAttribute("page",page);
+        model.addAttribute("sortField",sortField);
+        model.addAttribute("sortDir",sortDir);
+        model.addAttribute("keyword",keyword);
         return "users";
     }
 }

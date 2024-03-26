@@ -10,19 +10,19 @@ import java.util.Set;
 public class  User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
     @Column(name = "email",length = 128, nullable = false,unique = true)
-    private String Email;
+    private String email;
     @Column(name ="enabled",length = 4,nullable = false)
-    private boolean Enabled;
+    private boolean enabled;
     @Column(name = "first_name",length = 45,nullable = false)
-    private String FirstName;
+    private String firstName;
     @Column(name = "last_name",length = 45,nullable = false)
-    private String LastName;
+    private String lastName;
     @Column(name = "password",length = 64, nullable = false)
-    private String Password;
+    private String password;
     @Column(name = "photos",length = 64)
-    private String Photos;
+    private String photos;
 
     @ManyToMany
     @JoinTable(
@@ -32,80 +32,84 @@ public class  User {
     )
     private Set<Role> roles = new HashSet<Role>();
 
-    public User(String email, boolean enabled, String firstName, String lastName, String password, String photos, Set<Role> roles) {
-        Email = email;
-        Enabled = enabled;
-        FirstName = firstName;
-        LastName = lastName;
-        Password = password;
-        Photos = photos;
+    public User(Integer id, String email, boolean enabled, String firstName, String lastName, String password, String photos, Set<Role> roles) {
+        this.id = id;
+        this.email = email;
+        this.enabled = enabled;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.photos = photos;
         this.roles = roles;
     }
 
     public User() {
     }
 
-    public Integer getId() {
-        return Id;
+    public User(String email, boolean enabled, String firstName, String lastName, String password, String photos, Set<Role> roles) {
+        this.email = email;
+        this.enabled = enabled;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.photos = photos;
+        this.roles = roles;
     }
 
-    public User(String email, String firstName, String lastName, String password) {
-        Email = email;
-        FirstName = firstName;
-        LastName = lastName;
-        Password = password;
+    public Integer getId() {
+        return id;
     }
 
     public void setId(Integer id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
     public boolean isEnabled() {
-        return Enabled;
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {
-        Enabled = enabled;
+        this.enabled = enabled;
     }
 
     public String getFirstName() {
-        return FirstName;
+        return firstName;
     }
 
     public void setFirstName(String firstName) {
-        FirstName = firstName;
+        this.firstName = firstName;
     }
 
     public String getLastName() {
-        return LastName;
+        return lastName;
     }
 
     public void setLastName(String lastName) {
-        LastName = lastName;
+        this.lastName = lastName;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
     public String getPhotos() {
-        return Photos;
+        return photos;
     }
 
     public void setPhotos(String photos) {
-        Photos = photos;
+        this.photos = photos;
     }
 
     public Set<Role> getRoles() {
@@ -115,27 +119,25 @@ public class  User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-    public void addRole(Role role) {
-        this.roles.add(role);
+
+    @Transient
+    public String getPhotosImagePath(){
+        if(this.id ==null || this.photos==null)
+            return "/images/default-user.png";
+        return "/user-photos/" + this.id +"/"+ this.photos;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "Id=" + Id +
-                ", Email='" + Email + '\'' +
-                ", Enabled=" + Enabled +
-                ", FirstName='" + FirstName + '\'' +
-                ", LastName='" + LastName + '\'' +
-                ", Password='" + Password + '\'' +
-                ", Photos='" + Photos + '\'' +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", enabled=" + enabled +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", password='" + password + '\'' +
+                ", photos='" + photos + '\'' +
                 ", roles=" + roles +
                 '}';
-    }
-    @Transient
-    public String getPhotosImagePath(){
-        if(this.Id ==null || this.Photos==null)
-            return "/images/default-user.png";
-        return "/user-photos/" + this.Id +"/"+ this.Photos;
     }
 }

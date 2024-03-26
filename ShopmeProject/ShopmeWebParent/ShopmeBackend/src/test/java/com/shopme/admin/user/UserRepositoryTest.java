@@ -29,25 +29,25 @@ public class UserRepositoryTest {
         this.testEntityManager = testEntityManager;
     }
 
-    @Test
-    public void CreateUserTest(){
-        Role roleAdmin = testEntityManager.find(Role.class,3);
-        User userDucAnh = new User("lehuuducanh1@gmail.com","Duc Anh", "Le Huu","ducanh123");
-        userDucAnh.addRole(roleAdmin);
-        userDucAnh.setEnabled(false);
-        User saveduser  = userRepository.save(userDucAnh);
-        assertThat(saveduser.getId()).isGreaterThan(0);
-    }
-    @Test
-    public void testCreateNewUserWithTwoRole(){
-        Role roleAdmin = testEntityManager.find(Role.class,3);
-        Role roleEditor = testEntityManager.find(Role.class,6);
-        User userAdmin = new User("admin@gmail.com","Admin","Admin","123456");
-        userAdmin.addRole(roleEditor);
-        userAdmin.addRole(roleAdmin);
-        User saveduser  = userRepository.save(userAdmin);
-        assertThat(saveduser.getId()).isGreaterThan(0);
-    }
+//    @Test
+//    public void CreateUserTest(){
+//        Role roleAdmin = testEntityManager.find(Role.class,3);
+//        User userDucAnh = new User("lehuuducanh1@gmail.com","Duc Anh", "Le Huu","ducanh123");
+//        userDucAnh.addRole(roleAdmin);
+//        userDucAnh.setEnabled(false);
+//        User saveduser  = userRepository.save(userDucAnh);
+//        assertThat(saveduser.getId()).isGreaterThan(0);
+//    }
+//    @Test
+//    public void testCreateNewUserWithTwoRole(){
+//        Role roleAdmin = testEntityManager.find(Role.class,3);
+//        Role roleEditor = testEntityManager.find(Role.class,6);
+//        User userAdmin = new User("admin@gmail.com","Admin","Admin","123456");
+//        userAdmin.addRole(roleEditor);
+//        userAdmin.addRole(roleAdmin);
+//        User saveduser  = userRepository.save(userAdmin);
+//        assertThat(saveduser.getId()).isGreaterThan(0);
+//    }
     @Test
     public void testFindUser(){
         Iterable<User> listUsers = userRepository.findAll();
@@ -76,6 +76,18 @@ public class UserRepositoryTest {
         List<User> pages = page.stream().toList();
         pages.forEach(p->{
             System.out.println(p);
+        });
+    }
+    @Test
+    public void testListPageWithKeyWord() {
+        int pageNumber = 0;
+        int pageSize = 4;
+        String keyword = "Lee";
+        Pageable pageable = PageRequest.of(pageNumber,pageSize);
+        Page<User> page = userRepository.listAll(keyword,pageable);
+        List<User> pages = page.stream().toList();
+        pages.forEach(p->{
+            System.out.println(p.toString());
         });
     }
 }

@@ -6,13 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-
 @Service
 public class UserService {
     public static int USER_PER_PAGE = 5;
@@ -30,8 +28,15 @@ public class UserService {
     public List<User> listAll(){
         return (List<User>) userRepository.findAll();
     }
-    public Page<User> listPageUser(int pageNum){
-        Pageable pageable = PageRequest.of(pageNum - 1,USER_PER_PAGE);
+    public Page<User> listPageUser(int pageNum, String sortField, String sortDir,String keyword){
+
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("desc") ? sort.descending() : sort.ascending();
+        Pageable pageable = PageRequest.of(pageNum - 1,USER_PER_PAGE, sort);
+        if(keyword!=null) {
+            System.out.println(keyword);
+            return userRepository.listAll(keyword,pageable);
+        }
         return userRepository.findAll(pageable);
     }
 
