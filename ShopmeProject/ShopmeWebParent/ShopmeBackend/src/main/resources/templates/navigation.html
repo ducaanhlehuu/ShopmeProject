@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec = "http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="menu">
+  <form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
+    <input type="submit">
+  </form>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" th:href="@{/}">
+      <img th:src="@{/images/signature_white.png}" style="width:150px">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="topNavbar">
+      <ul class="navbar-nav">
+        <li th:replace="~{fragment::nav_link('users','Users')}"
+            sec:authorize="hasAuthority('Admin')"/>
+        <li th:replace="~{fragment::nav_link('categories','Categories')}"
+            sec:authorize="hasAnyAuthority('Admin','Editor')"/>
+        <li th:replace="~{fragment::nav_link('brands','Brands')}"
+            sec:authorize="hasAnyAuthority('Admin','Editor')"/>
+        <li th:replace="~{fragment::nav_link('products','Products')}"
+            sec:authorize="hasAnyAuthority('Admin','Editor','Salesperson','Shipper')"/>
+        <li th:replace="~{fragment::nav_link('customers','Customers')}"
+            sec:authorize="hasAnyAuthority('Admin','Salesperson')"/>
+        <li th:replace="~{fragment::nav_link('shipping','Shipping')}"
+            sec:authorize="hasAnyAuthority('Admin','Salesperson')"/>
+        <li th:replace="~{fragment::nav_link('report','Sales Report')}"
+            sec:authorize="hasAnyAuthority('Admin','Salesperson')"/>
+        <li th:replace="~{fragment::nav_link('orders','Orders')}"
+            sec:authorize="hasAnyAuthority('Admin','Salesperson','Shipper')"/>
+        <li th:replace="~{fragment::nav_link('articles','Articles')}"
+            sec:authorize="hasAnyAuthority('Admin','Editor')"/>
+        <li th:replace="~{fragment::nav_link('menus','Menus')}"
+            sec:authorize="hasAnyAuthority('Admin','Editor')"/>
+        <li th:replace="~{fragment::nav_link('setting','Setting')}"
+            sec:authorize="hasAuthority('Admin')"/>
+        <li>
+          <span class="fa fa-user fa-2x" style="color: silver"></span>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown"
+             sec:authentication="principal.fullName"></a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" th:href="@{/account}">Manage Account</a>
+            <a class="dropdown-item" th:href="@{/account/change_password}">Change Password</a>
+            <a class="dropdown-item" id="logoutLink">Logout</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>
+</body>
+</html>

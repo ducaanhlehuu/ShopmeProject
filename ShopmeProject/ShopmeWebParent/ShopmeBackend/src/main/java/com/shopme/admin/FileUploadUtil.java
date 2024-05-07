@@ -24,8 +24,10 @@ public class FileUploadUtil {
 
     public static void cleanDir(String cleanDir){
         Path dirPath = Paths.get(cleanDir);
-
         try{
+            if(!Files.exists(dirPath)){
+                Files.createDirectories(dirPath);
+            }
             Files.list(dirPath).forEach(file->{
                 if(!Files.isDirectory(file)){
                     try{
@@ -39,7 +41,15 @@ public class FileUploadUtil {
             });
         }
         catch (IOException e){
-            System.out.println("Coud not list dir Path: "+ dirPath);
+            System.out.println("Could not list dir Path: "+ dirPath);
+        }
+    }
+    public static void removeDir(String dir){
+        cleanDir(dir);
+        try{
+            Files.delete(Paths.get(dir));
+        } catch (IOException e) {
+            System.out.println("Could not remove dir" + dir);
         }
     }
 }

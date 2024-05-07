@@ -34,12 +34,10 @@ public class UserService {
         sort = sortDir.equals("desc") ? sort.descending() : sort.ascending();
         Pageable pageable = PageRequest.of(pageNum - 1,USER_PER_PAGE, sort);
         if(keyword!=null) {
-            System.out.println(keyword);
             return userRepository.listAll(keyword,pageable);
         }
         return userRepository.findAll(pageable);
     }
-
     public User saveUser(User user){
         boolean isUpdatingUser = (user.getId() !=null);
         if(isUpdatingUser){
@@ -59,7 +57,9 @@ public class UserService {
     public List<Role> listRoleAll(){
         return (List<Role>) roleRepository.findAll();
     }
-
+    public String passwordEncoded(String password){
+        return passwordEncoder.encode(password);
+    }
     public void encodePassword(User user){
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
@@ -100,4 +100,22 @@ public class UserService {
     public void updateEnabledStatus(Integer id, boolean enabled){
         userRepository.updateEnabledStatus(id,enabled);
     }
+
+    public User getUserByEmail(String email){
+        return userRepository.getUserByEmail(email);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+    public User updateAccount(User user){
+        User userInDB = userRepository.findById(user.getId()).get();
+        if(user.getPhotos()!=null){
+            userInDB.setPhotos(user.getPhotos());
+        }
+        userInDB.setFirstName(user.getFirstName());
+        userInDB.setLastName(user.getLastName());
+        return userRepository.save(userInDB);
+    }
+
 }

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment::page_head('Categories - ShopDA Admin')}">
+<body>
+<div class="container-fluid">
+  <div>
+    <div th:replace="~{navigation::menu}"></div>
+    <h1>Quản lý danh mục hàng</h1>
+    <a  th:href="@{/categories/new}">Tạo danh mục </a>
+  </div>
+  <div th:if="${message!=null}" class="alert-success alert text-center">
+      [[${message}]]
+  </div>
+  <br>
+
+  <div>
+    <form th:action="@{'/categories/page/1'}" class="form-inline mb-3">
+      Filter:&nbsp;
+      <input type="search" style="max-width: 200px" name="keyword" id="keyword" th:value="${keyword}" required>
+      &nbsp;&nbsp;
+      <button type="submit" class="btn btn-primary m-1 ">Search</button>
+      &nbsp;&nbsp;
+      <button type="button" class="btn btn-secondary m-1" onclick="clearSearch()">Clear</button>
+    </form>
+
+  </div>
+  <div class="full-details">
+    <table class="table table-responsive-xl table-hover table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr class=>
+          <th class="overflow-hidden">ID</th>
+          <th>Ảnh danh mục</th>
+          <th>Tên danh mục</th>
+          <th class="overflow-hidden">Biệt danh</th>
+          <th>Đã kích hoạt</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="category:${categories}">
+          <td class="overflow-hidden">[[${category.id}]]</td>
+          <td>
+            <span th:if="${category.image} ==null" class="fa-solid fa-image-portrait fa-2x" style="color:gray"></span>
+            <img th:if="${category.image}!=null" th:src="@{${category.getImagePath()}}" style="width:100px"/>
+          </td>
+          <td>[[${category.name}]]</td>
+          <td class="overflow-hidden">[[${category.alias}]]</td>
+          <td>
+            <a class="btn" th:href="@{'/categories/' + ${category.id}+'/update_status/'+ ${!category.enabled}}" id="enableButton">
+              <i th:if="${category.enabled}" class="fa-solid fa-check-circle fa-2x" style="color:green"></i>
+              <i th:if="${!category.enabled}" class="fa-solid fa-circle fa-2x" style="color:gray"></i>
+            </a>
+          </td>
+          <td>
+            <a class="fa-solid fa-pen-to-square fa-2x" th:href="@{'/categories/update/' + ${category.id}}" style="color:darkseagreen" title="Edit this category"/>
+            &nbsp;
+            <th:block th:if="${!category.hasChildren}">
+              <a class="fa fa-trash fa-2x link-delete" th:href="@{'/categories/delete/'+${category.id}}"
+                 th:entityId="${category.id}" style="color:gray" title="Delete this category" />
+            </th:block>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="text-center m-1" th:if="${numberOfElements}>0">
+      <span>Hiển thị các danh mục gốc #[[${startCount}]] to #[[${endCount}]] of [[${totalElements}]]</span>
+    </div>
+    <div class="text-center m-1" th:if="${numberOfElements}<=0">
+      <span class="fa-2x">Không tìm thấy trang!</span>
+    </div>
+
+    <nav th:if="${numberOfElements}" aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li th:class="${currentPage<=1 ? 'page-item disabled': 'page-item'}">
+          <a th:replace="~{fragment::category_page_link(1,'First')}"></a>
+        </li>
+
+        <li th:class="${currentPage<=1 ? 'page-item disabled': 'page-item'}">
+          <a th:replace="~{fragment::category_page_link(${currentPage} - 1,'Preveous')}"></a>
+        </li>
+
+        <li th:class="${index!=currentPage ? 'page-item' : 'active page-item'}" th:each="index : ${#numbers.sequence(1,totalPages)}">
+          <a th:replace="~{fragment::category_page_link(${index},${index})}"></a>
+        </li>
+
+        <li th:class="${currentPage>=totalPages ? 'page-item disabled': 'page-item'}">
+          <a th:replace="~{fragment::category_page_link(${currentPage} + 1,'Next')}"></a>
+        </li>
+        <li th:class="${currentPage>=totalPages ? 'page-item disabled': 'page-item'}">
+          <a th:replace="~{fragment::category_page_link(${totalPages},'Last')}"></a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="modal fade text-center" id="modalDialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modalTitle">Xác Nhận Xóa</h4>
+            <button type="button"class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <span id="modalBody"></span>
+          </div>
+          <div class="modal-footer">
+            <a type="button" class="btn btn-success" id="yesButton" href="">Có</a>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Hủy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="text-center">
+    <p> Shopme Admin Control Panel - Copyright &copy;Shopme</p>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+      $(".link-delete").on("click",function (e){
+        let link = $(this);
+        let category_id = link.attr("entityId")
+        e.preventDefault();
+        $("#yesButton").attr("href",link.attr("href"));
+        $("#modalBody").text("Bạn chắc chắn muốn xóa danh mục Id: "+ category_id + "?");
+        $("#modalDialog").modal();
+      });
+  });
+  function clearSearch(){
+    window.location = "[[@{/categories}]]";
+  }
+</script>
+</body>
+</html>

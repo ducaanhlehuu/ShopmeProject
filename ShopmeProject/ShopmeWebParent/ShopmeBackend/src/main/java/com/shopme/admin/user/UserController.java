@@ -35,20 +35,19 @@ public class UserController {
         model.addAttribute("listRoles",allRole);
         model.addAttribute("user",new_user);
         model.addAttribute("PageTitle","Create New User");
-        return "user_form";
+        return "users/user_form";
     }
     @PostMapping("/users/save")
-    public String saveUser(Integer id, User user, RedirectAttributes redirectAttributes,
+    public String saveUser(User user, RedirectAttributes redirectAttributes,
                            @RequestParam("image") MultipartFile multipartFile) throws IOException {
 
         if(!multipartFile.isEmpty()){
             String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            user.setPhotos(fileName);
+            User savedUser = userService.saveUser(user);
             String uploadDir = "user-photos/" + user.getId();
             FileUploadUtil.cleanDir(uploadDir);
             FileUploadUtil.saveFile(uploadDir,fileName,multipartFile);
-            user.setPhotos(fileName);
-            User savedUser = userService.saveUser(user);
-
         }
         else {
             if(user.getPhotos().isEmpty())
@@ -72,7 +71,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("message",e.getMessage() );
             return "redirect:/users";
         }
-        return "user_form";
+        return "users/user_form";
     }
     @GetMapping("/users/delete/{id}")
     public String deleteUser(@PathVariable(name="id") Integer id,RedirectAttributes redirectAttributes){
@@ -103,13 +102,7 @@ public class UserController {
                                    @Param("keyword") String keyword){
 
         pageNum = pageNum<=0 ? 1 : pageNum;
-
-        System.out.println(sortField);
-        System.out.println(sortDir);
         Page<User> page = userService.listPageUser(pageNum,sortField,sortDir,keyword);
-        page.getContent().forEach(p->{
-            System.out.println(p.toString());
-        });
         long startCount = (pageNum - 1) * userService.USER_PER_PAGE + 1;
         long endCount = Math.min(startCount + userService.USER_PER_PAGE - 1,page.getTotalElements());
 
@@ -121,7 +114,8 @@ public class UserController {
         model.addAttribute("sortField",sortField);
         model.addAttribute("sortDir",sortDir);
         model.addAttribute("keyword",keyword);
-        return "users";
+        return "users/users";
     }
+
 }
 

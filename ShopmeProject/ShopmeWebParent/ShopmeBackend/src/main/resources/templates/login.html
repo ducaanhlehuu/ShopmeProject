@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment::page_head('Login - Shop Duc Anh')}">
+<body>
+  <div class="container-fluid text-center">
+    <img th:src="@{/images/signature_big.png}" style="max-width: 500px;margin-top: 20px"/>
+    <form th:action="@{/login}" method="post" style="max-width: 400px;margin: 30px auto">
+      <div th:if="${param.error}">
+          <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+      </div>
+      <div th:if="${param.logout}">
+          <p class="text-info" style="font-size:20px">Bạn đã đăng xuất thành công!</p>
+      </div>
+      <div class="border rounded border-secondary p-3 ">
+        <p style="font-size: 18px">Access to Admin DashBoard</p>
+        <p>
+          <input type="email" name = "email" class="form-control" placeholder="Email" required>
+        </p>
+        <p>
+          <input type="password" name = "password" class="form-control" placeholder="Password" required>
+        </p>
+        <p>
+          <input type="checkbox" name = "remember-me" class="checkboxes">&nbsp; Nhớ tài khoản này
+        </p>
+        <p>
+          <input type="submit" class="btn btn-primary" value="Login">
+        </p>
+      </div>
+    </form>
+    </br>
+    </br>
+    <div>
+      <p> ShopDA Admin Control Panel - Copyright &copy;Shopme</p>
+    </div>
+  </div>
+</body>
+</html>

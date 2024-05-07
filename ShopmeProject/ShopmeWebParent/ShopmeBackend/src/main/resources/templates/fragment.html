@@ -1,8 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec = "http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:fragment="page_head(pageTitle)" >
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>[[${pageTitle}]]</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}">
+
 </head>
 <body>
     <th th:fragment="column_change(fieldName, fieldLabel)">
@@ -24,5 +31,15 @@
     <a th:fragment="page_link(pageNum,label)" class="page-link"
        th:href="@{'/users/page/'+${pageNum}+'?sortField='+${sortField}+'&sortDir='
           + ${sortDir} + ${keyword==null ? '': '&keyword=' + keyword}}">[[${label}]]</a>
+
+    <a th:fragment="category_page_link(pageNum,label)" class="page-link"
+       th:href="@{'/categories/page/'+${pageNum}}" >[[${label}]]</a>
+
+    <a th:fragment="product_page_link(pageNum,label)" class="page-link"
+       th:href="@{'/products/page/'+ ${pageNum} + ${keyword==null ? '': '&keyword=' + keyword}+ ${categoryId==null ? '': '&categoryId=' + categoryId}}" >[[${label}]]</a>
+
+    <li th:fragment="nav_link(fieldName,label)" class="nav-item">
+        <a class="nav-link" th:href="@{'/' + ${fieldName}}">[[${label}]]</a>
+    </li>
 </body>
 </html>
