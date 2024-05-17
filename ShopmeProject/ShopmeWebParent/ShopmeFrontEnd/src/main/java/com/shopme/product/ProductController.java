@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Controller
 public class CategoryController {
     @Autowired private CategoryService categoryService;
@@ -16,7 +18,10 @@ public class CategoryController {
         if(category==null){
             return "error/404";
         }
+        List<Category> categoryParents = categoryService.getCategoryParent(category);
+
         model.addAttribute("pageTitle",category.getName());
+        model.addAttribute("listCategoryParents", categoryParents);
 
         return "product_by_category";
     }

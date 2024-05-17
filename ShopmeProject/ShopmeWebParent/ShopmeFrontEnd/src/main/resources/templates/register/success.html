@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragment :: page_head(${pageTitile})}" />
+
+<body>
+<div class="container-fluid">
+    <div th:replace="~{navigation :: header_menu}"></div>
+    <div th:replace="~{navigation :: search_nav}"></div>
+    <div>
+        <h1>Đăng ký tài khoản mới</h1>
+    </div>
+
+    <form th:action="@{/create_customer}" method="post" th:object="${customer}"
+          onsubmit="return checkEmailUnique(this)" style="max-width: 600px; margin: 0 auto">
+        <div class="border border-secondary rounded p-3">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Họ và tên:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{fullName}" class="form-control"
+                           required="required" maxlength="126" minlength="2" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">E-mail:</label>
+                <div class="col-sm-8">
+                    <input type="email" th:field="*{email}" class="form-control" id ="email"
+                           required="required" maxlength="45" minlength="8" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Mật khẩu:</label>
+                <div class="col-sm-8">
+                    <input type="password" th:field="*{password}" class="form-control"
+                           required="required" maxlength="15" minlength="6" id="password"
+                           oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"
+                    />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Nhập lại mật khẩu:</label>
+                <div class="col-sm-8">
+                    <input type="password" id="confirmPassword" class="form-control"
+                           required="required" maxlength="15" minlength="6"
+                           oninput="checkPasswordMatch(this)"
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Số điện thoại:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{phoneNumber}" class="form-control"
+                           required="required" maxlength="15" minlength="8" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Địa chỉ nhà 1:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{addressLine1}" class="form-control"
+                           required="required" maxlength="64" minlength="3" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Địa chỉ nhà 2 (Không bắt buộc):</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{addressLine2}" class="form-control"
+                           maxlength="64" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Tỉnh:</label>
+                <div class="col-sm-8">
+                    <select class="form-control" th:field="*{province}" id="listProvinces" onchange="updateDistricts(this.options[this.selectedIndex].value)">
+                        <option th:value="0" disabled>Chọn tỉnh, thành phố</option>
+                    </select>
+                    &nbsp;
+                    <select class="form-control" th:field="*{province}" id="listDistricts" onchange="updateWards(this.options[this.selectedIndex].value)">
+                        <option th:value="0" disabled>Chọn quận huyện</option>
+                    </select>
+                    &nbsp;
+                    <select class="form-control" th:field="*{province}" id="listWards" >
+                        <option th:value="0" disabled>Chọn xã, phường, thị trấn</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Mã bưu cục:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{postalCode}" class="form-control"
+                           maxlength="10" minlength="2" />
+                </div>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Tạo tài khoản" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </form>
+    <div th:replace="~{fragment::modal}"></div>
+    <div>&nbsp;</div>
+    <div th:replace="~{navigation :: footer_menu}"></div>
+</div>
+<script>
+    $(document).ready(function (){
+        getProvinces();
+    })
+    function getProvinces(){
+        const response = fetch('https://vapi.vnappmob.com/api/province/')
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu khi nhận về thành công
+                const provinces = data.results.map(province => {
+                    return {
+                        id: province.province_id,
+                        name: province.province_name
+                    };
+                });
+                provinces.forEach(province => {
+                    const $option = $("<option></option>")
+                        .attr("value", province.id)
+                        .text(province.name);
+                    $("#listProvinces").append($option);
+                });
+                console.log(provinces);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    function updateDistricts(province_id) {
+        $("#listDistricts").empty().append('<option value="0" disabled selected>Chọn quận huyện</option>');
+        $("#listWards").empty().append('<option value="0" disabled selected>Chọn xã, phường, thị trấn</option>');
+        fetch(`https://vapi.vnappmob.com/api/province/district/${province_id}`)
+            .then(response => response.json())
+            .then(data => {
+                const districts = data.results.map(district => {
+                    return {
+                        id: district.district_id,
+                        name: district.district_name
+                    };
+                });
+                console.log(province_id)
+                districts.forEach(district => {
+                    const $option = $("<option></option>")
+                        .attr("value", district.id)
+                        .text(district.name);
+                    $("#listDistricts").append($option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching districts:', error);
+            });
+    }
+
+    function updateWards(district_id) {
+        $("#listWards").empty().append('<option value="0" disabled selected>Chọn xã, phường, thị trấn</option>');
+        fetch(`https://vapi.vnappmob.com/api/province/ward/${district_id}`)
+            .then(response => response.json())
+            .then(data => {
+                const wards = data.results.map(ward => {
+                    return {
+                        id: ward.ward_id,
+                        name: ward.ward_name
+                    };
+                });
+                wards.forEach(ward => {
+                    const $option = $("<option></option>")
+                        .attr("value", ward.id)
+                        .text(ward.name);
+                    $("#listWards").append($option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching wards:', error);
+            });
+    }
+    function checkPasswordMatch(confirmPassword){
+        if(confirmPassword.value!=$("#password").val()){
+            confirmPassword.setCustomValidity("Mật khẩu không khớp")
+            console.log(confirmPassword.value)
+        }
+        else{
+            confirmPassword.setCustomValidity('')
+        }
+    }
+    function checkEmailUnique(form){
+        let url = "[[@{/customers/check_email_unique}]]"
+        let customerEmail = $("#email").val();
+        let csrf = $("input[name='_csrf']").val();
+        let params = {email:customerEmail,_csrf: csrf};
+
+        $.post(url,params, function (response){
+            if(response=="OK"){
+                form.submit();
+            }
+            else if(response=="Duplicated"){
+                showModalDialog("Warning","There is another having this email: "+customerEmail);
+            }
+            else {
+                showModalDialog("Error","Unknown response from server");
+            }
+        }).fail(function (){
+            showModalDialog("Error","Could not connect to the server");
+        });
+        return false;
+    }
+    function showModalDialog(title, message) {
+        $("#modalTitle").text(title);
+        $("#modalBody").text(message);
+        $("#modalDialog").modal();
+    }
+</script>
+
+</body>
+
+</html>
