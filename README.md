@@ -1,0 +1,1 @@
+Website cho phép khách hàng xem sản phẩm, thêm giỏ hàng và đặt hàng. Admin có thể quản lý các sản phẩm, người dùng, đơn hàng, đánh giá. Cho phép đăng ký đăng nhập tài khoản, Oauth2 với Google và Facebook, dịch vụ SMTP của Gmail. Phân quyền cho phía Admin với Admin, Editor, Shipper, SalePerson, User.
