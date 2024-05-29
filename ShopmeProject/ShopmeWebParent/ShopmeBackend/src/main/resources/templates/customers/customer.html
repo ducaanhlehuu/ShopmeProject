@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment :: page_head('Quản lý khách hàng - Shopme Admin')" />
+<body>
+<div class="container-fluid">
+  <div th:replace="navigation :: menu"></div>
+  <div>
+    <h2>Manage Customers</h2>
+
+<!--    <a th:href="@{/customers/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>-->
+  </div>
+
+  <div th:if="${message!=null}" class="alert-success alert text-center">
+    [[${message}]]
+  </div>
+  <br>
+
+  <div>
+    <form th:action="@{'/customers/page/1'}" class="form-inline mb-3">
+      Filter:&nbsp;
+      <input type="search" style="max-width: 200px" name="keyword" id="keyword" th:value="${keyword}" required>
+      &nbsp;&nbsp;
+      <button type="submit" class="btn btn-primary m-1 ">Search</button>
+      &nbsp;&nbsp;
+      <button type="button" class="btn btn-secondary m-1" onclick="clearSearch()">Clear</button>
+    </form>
+
+  </div>
+
+  <div class="full-details">
+    <table class="table table-bordered table-striped table-hover table-responsive-xl">
+      <thead class="thead-dark">
+      <tr>
+       <th>Id</th>
+        <th>Tên đầy đủ</th>
+        <th>Email</th>
+        <th>Số điện thoại</th>
+        <th>Tỉnh</th>
+        <th>Địa chỉ</th>
+        <th>Đã kích hoạt</th>
+        <th></th>
+
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="customer : ${listCustomers}">
+        <td>[[${customer.id}]]</td>
+        <td>[[${customer.fullName}]]</td>
+        <td class="hideable-column">[[${customer.email}]]</td>
+        <td class="hideable-column">[[${customer.phoneNumber}]]</td>
+        <td class="hideable-column">[[${customer.province}]]</td>
+        <td class="hideable-column">[[${customer.addressLine1}]]</td>
+        <td>
+          <a class="btn" th:href="@{'/customers/' + ${customer.id}+'/update_status/'+ ${!customer.enabled}}" id="enableButton">
+            <i th:if="${customer.enabled}" class="fa-solid fa-check-circle fa-2x" style="color:green"></i>
+            <i th:if="${!customer.enabled}" class="fa-solid fa-circle fa-2x" style="color:gray"></i>
+          </a>
+        </td>
+        <td>
+          <a class="fa-solid fa-pen-to-square fa-2x" th:href="@{'/customers/update/' + ${customer.id}}" style="color:darkseagreen" title="Edit this customer"/>
+          &nbsp;
+          <a class="fa fa-trash fa-2x link-delete" th:entityId="${customer.id}" th:href="@{'/customers/delete/'+${customer.id}}" style="color:gray" />
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div th:replace="fragment::modal_dialog"></div>
+
+  <div class="modal fade" id="detailModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>
+
+</div>
+<script th:src="@{/js/common_list.js}"></script>
+<script type="text/javascript">
+  moduleURL = "[[@{/customers}]]";
+
+  $(document).ready(function() {
+    $(".link-delete").on("click",function (e){
+      let link = $(this);
+      let customerId = link.attr("entityId")
+      e.preventDefault();
+      $("#yesButton").attr("href",link.attr("href"));
+      $("#modalBody").text("Bạn chắc chắn muốn xóa khách hàng ID: "+ customerId + "?");
+      $("#modalDialog").modal();
+    });
+
+  });
+  function clearSearch(){
+    window.location = "[[@{/customers}]]";
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment :: page_head(pageTitle)('Shopping Cart')" />
+<body>
+<div class="container-fluid">
+  <div th:replace="navigation :: header_menu"></div>
+  <div th:replace="navigation :: search_nav"></div>
+
+  <div class="text-center">
+    <h2>Giỏ hàng của bạn</h2>
+  </div>
+
+  <div class="row m-1">
+    <div class="col-sm-8">
+      <th:block th:each="item, status : ${cartItems}">
+        <div class="row border rounded p-1" th:with="product = ${item.product}" th:id="'row' + ${status.count}">
+          <div class="col-1">
+            <div class="divCount">[[${status.count}]]</div>
+          </div>
+          <div class="col-3">
+            <img th:src="@{${product.mainImagePath}}" class="img-fluid" />
+          </div>
+          <div class="col-6">
+            <div>
+              <a th:href="@{'/p/' + ${product.alias}}" target="_blank"
+                 th:title="${product.name}">
+                <b>[[${product.shorterName}]]</b>
+              </a>
+            </div>
+            <div th:replace="cart/quantity_control :: quantity_control(${item.quantity}, ${product.id})"></div>
+            <div>
+              <div th:if="${product.discountPercent<=0}">
+                Giá sản phẩm: <span >[[${product.formattedPrice}]]</span>
+              </div>
+
+              <div th:if="${product.discountPercent>0}">
+                Giá gốc: <span >[[${product.formattedPrice}]]</span>
+                <div>Giá khuyến mãi:
+                  <span style="font-size: larger;color: darkred">[[${product.discountPrice}]]</span>
+                  (Giảm [[${product.discountPercent}]] %)
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-2 align-items-center text-center">
+            <div>
+              <a class="fas fa-trash fa-2x icon-dark linkRemove mt-5" th:rowNumber="${status.count}" style="color: gray"
+                 th:href="@{'/cart/remove/' + ${product.id}}"></a>
+            </div>
+          </div>
+        </div>
+        <div class="row m-1" th:id="'blankLine' + ${status.count}">&nbsp;</div>
+      </th:block>
+    </div>
+
+    <div class="col-sm-4" th:unless="${#lists.isEmpty(cartItems)}" id="sectionTotal">
+      <div>
+        <span class="h3">Tổng số tiền cần thanh toán</span>
+      </div>
+      <div class="mt-2">
+        <span class="h2" style="color: indianred" id="totalPayment">&nbsp;&nbsp;[[${estimatedTotal}]]</span>
+      </div>
+      <div class="mt-2 ml-2">
+        <div th:if="${shippingSupported}">
+          <form th:action="@{/checkout}">
+            <button type="submit" class="btn btn-danger p-3 mt-2">Thanh toán</button>
+          </form>
+        </div>
+
+        <div th:unless="${shippingSupported}">
+          <div class="h5 text-warning">Vui lòng cập nhật địa chỉ mua hàng tại</div>
+          <div th:if="${usePrimaryAddressAsDefault}">
+            <a th:href="@{/account_details(redirect=cart)}">Cập nhật địa chỉ mua hàng </a>
+          </div>
+          <div th:unless="${usePrimaryAddressAsDefault}">
+            <a th:href="@{/address_book}">Thêm địa chỉ mua hàng</a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="sectionEmptyCartMessage" th:class="'text-center' + ${#lists.isEmpty(cartItems) ? '' : ' d-none'}" >
+    <h3>Bạn chưa chọn sản phẩm nào trước đó</h3>
+  </div>
+
+  <div th:replace="fragment :: modal "></div>
+  <div th:replace="navigation :: footer_menu"></div>
+</div>
+<script type="text/javascript">
+  contextPath = "[[@{/}]]";
+  var csrfHeaderName = "[[${_csrf.headerName}]]";
+  var csrfValue = "[[${_csrf.token}]]";
+  function showModalDialog(title, message) {
+    $("#modalTitle").text(title);
+    $("#modalBody").text(message);
+    $("#modalDialog").modal();
+  }
+</script>
+<!--<script type="text/javascript" th:src="@{/js/jquery.number.min.js}"></script>-->
+<script type="text/javascript" th:src="@{/js/shopping_cart.js}"></script>
+</body>
+</html>

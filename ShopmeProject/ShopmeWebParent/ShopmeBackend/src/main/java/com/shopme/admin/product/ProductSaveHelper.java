@@ -1,8 +1,8 @@
 package com.shopme.admin.product;
 
 import com.shopme.admin.FileUploadUtil;
-import com.shopme.admin.entity.Product;
-import com.shopme.admin.entity.ProductImage;
+import com.shopme.admin.entity.product.Product;
+import com.shopme.admin.entity.product.ProductImage;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 

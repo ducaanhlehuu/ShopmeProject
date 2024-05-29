@@ -1,6 +1,7 @@
 package com.shopme.admin.entity;
 
 import jakarta.persistence.*;
+import org.springframework.core.annotation.Order;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +24,7 @@ public class Category {
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
+    @OrderBy("name asc")
     private Set<Category> children = new HashSet<>();
 
     @Column(name = "all_parent_ids")

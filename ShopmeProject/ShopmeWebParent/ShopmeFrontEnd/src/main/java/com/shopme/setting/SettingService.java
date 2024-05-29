@@ -1,29 +1,27 @@
-package com.shopme.admin.setting;
+package com.shopme.setting;
 
 import com.shopme.admin.entity.setting.Setting;
 import com.shopme.admin.entity.setting.SettingCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+
 public class SettingService {
     @Autowired
     private SettingRepository repo;
 
-    public List<Setting> listAllSetting(){
-        return (List<Setting>) repo.findAll();
-    }
+    public MailSettingBag getEmailSettings() {
+        List<Setting> settings = repo.findByCategory(SettingCategory.MAIL_SERVER);
+        settings.addAll(repo.findByCategory(SettingCategory.MAIL_TEMPLATES));
 
-    public void saveAllSetting(Iterable<Setting> settings) {
-        repo.saveAll(settings);
+        return new MailSettingBag(settings);
     }
-
-    public List<Setting> getMailServerSetting(){
-        return (List<Setting>) repo.findByCategory(SettingCategory.MAIL_SERVER);
-    }
-    public List<Setting> getMailTemplateSetting(){
-        return (List<Setting>) repo.findByCategory(SettingCategory.MAIL_TEMPLATES);
+    public PaymentSettingBag getPaymentSettings() {
+        List<Setting> settings = repo.findByCategory(SettingCategory.PAYMENT);
+        return new PaymentSettingBag(settings);
     }
 }

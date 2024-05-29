@@ -1,9 +1,6 @@
 package com.shopme.admin.product;
 
-import com.shopme.admin.brand.BrandNotFoundException;
-import com.shopme.admin.category.CategoryPageInfo;
-import com.shopme.admin.entity.Category;
-import com.shopme.admin.entity.Product;
+import com.shopme.admin.entity.product.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

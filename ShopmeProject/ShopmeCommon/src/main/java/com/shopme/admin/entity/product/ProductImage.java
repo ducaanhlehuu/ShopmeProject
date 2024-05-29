@@ -1,5 +1,6 @@
-package com.shopme.admin.entity;
+package com.shopme.admin.entity.product;
 
+import com.shopme.admin.entity.product.Product;
 import jakarta.persistence.*;
 
 @Entity
@@ -60,6 +61,6 @@ public class ProductImage {
 
     @Transient
     public String getImagePath(){
-        return "/product-images/" + product.getId() + "/extra/" + this.name;
+        return "/product-images/" + product.getId() + "/extras/" + this.name;
     }
 }

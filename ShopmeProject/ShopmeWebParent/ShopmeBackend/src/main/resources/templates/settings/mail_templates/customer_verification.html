@@ -3,31 +3,22 @@
 <body>
 <div th:fragment="content" th:remove="tag">
   &nbsp;
-  <form th:action="@{/settings/save_mail_templates}" method="post">
-    <div>
-      <ul class="nav nav-tabs" id="mailTemplatesTab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" data-toggle="tab" href="#customerVerification" role="tab">Xác thực khách hàng</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#orderConfirmation" role="tab">Xác nhận đơn hàng</a>
-        </li>
-      </ul>
-
-      <div class="tab-content">
-        <div class="tab-pane active p-3" id="customerVerification" role="tabpanel">
-          <div th:replace="settings/mail_templates/customer_verification:: content"></div>
-        </div>
-        <div class="tab-pane p-3" id="orderConfirmation" role="tabpanel">
-          <div th:replace="settings/mail_templates/order_confirmation:: content"></div>
-        </div>
-      </div>
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Tiêu đề E-mail</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="CUSTOMER_VERIFY_SUBJECT" th:value="${CUSTOMER_VERIFY_SUBJECT}" required/>
     </div>
+  </div>
 
-    <div class="text-center">
-      <input type="submit" value="Save" class="btn btn-primary m-3" />
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Nội dung E-mail</label>
+    <div class="col-sm-10">
+      <textarea rows="8" class="form-control" name="CUSTOMER_VERIFY_CONTENT" id="customerVerifyContent" required>[[${CUSTOMER_VERIFY_CONTENT}]]</textarea>
     </div>
-  </form>
+  </div>
+  <div class="italic bold font-xl">
+    Có thể soạn thảo văn bản dạng Rich Text tại: <link>https://www.editpad.org/tool/online-rich-text-editor</link>
+  </div>
 </div>
 </body>
 </html>

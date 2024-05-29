@@ -1,10 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragment :: page_head(${pageTitile})}" />
+
 <body>
-$END$
+<div class="container-fluid">
+    <div th:replace="~{navigation :: header_menu}"></div>
+    <div th:replace="~{navigation :: search_nav}"></div>
+    <div>
+        <h1>Đăng ký tài khoản mới</h1>
+    </div>
+
+    <form th:action="@{/customers/create_customer}" method="post" th:object="${customer}"
+          onsubmit="return checkEmailUnique(this)" style="max-width: 600px; margin: 0 auto">
+        <div class="border border-secondary rounded p-3">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Họ và tên:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{fullName}" class="form-control"
+                           required="required" maxlength="126" minlength="2" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">E-mail:</label>
+                <div class="col-sm-8">
+                    <input type="email" th:field="*{email}" class="form-control" id ="email"
+                           required="required" maxlength="45" minlength="8" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Mật khẩu:</label>
+                <div class="col-sm-8">
+                    <input type="password" th:field="*{password}" class="form-control"
+                           required="required" maxlength="15" minlength="6" id="password"
+                           oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"
+                    />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Nhập lại mật khẩu:</label>
+                <div class="col-sm-8">
+                    <input type="password" id="confirmPassword" class="form-control"
+                           required="required" maxlength="15" minlength="6"
+                           oninput="checkPasswordMatch(this)"
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Số điện thoại:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{phoneNumber}" class="form-control"
+                           required="required" maxlength="15" minlength="8" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Địa chỉ nhà 1:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{addressLine1}" class="form-control"
+                           required="required" maxlength="64" minlength="3" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Địa chỉ nhà 2 (Không bắt buộc):</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{addressLine2}" class="form-control"
+                           maxlength="64" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Tỉnh:</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="listProvinces" onchange="updateDistricts(this.options[this.selectedIndex])" required>
+                        <option value="0" selected>Chọn tỉnh, thành phố</option>
+                    </select>
+                    <input type="hidden" th:field="*{provinceId}" id="provinceId" />
+                    <input type="hidden" th:field="*{province}" id="provinceName" />
+                    &nbsp;
+                    <select class="form-control" id="listDistricts" onchange="updateWards(this.options[this.selectedIndex])" required>
+                        <option value="0" selected>Chọn quận huyện</option>
+                    </select>
+                    <input type="hidden" th:field="*{districtId}" id="districtId" />
+                    <input type="hidden" th:field="*{district}" id="districtName" />
+                    &nbsp;
+                    <select class="form-control" id="listWards" required onchange="updateWardFields(this.options[this.selectedIndex])">
+                        <option value="0" disabled>Chọn xã, phường, thị trấn</option>
+                    </select>
+                    <input type="hidden" th:field="*{wardId}" id="wardId" />
+                    <input type="hidden" th:field="*{ward}" id="wardName" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Mã bưu cục:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{postalCode}" class="form-control"
+                           maxlength="10" minlength="2" />
+                </div>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Tạo tài khoản" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </form>
+    <div th:replace="~{fragment::modal}"></div>
+    <div>&nbsp;</div>
+    <div th:replace="~{navigation :: footer_menu}"></div>
+</div>
+<script>
+    $(document).ready(function (){
+        getProvinces();
+    })
+</script>
+<script type="text/javascript" th:src="@{/js/provinceApi.js}"></script>
+<script type="text/javascript" th:src="@{/js/common_customer_form.js}"></script>
+
 </body>
+
 </html>

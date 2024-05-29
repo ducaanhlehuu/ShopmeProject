@@ -1,4 +1,4 @@
-package com.shopme.security;
+package com.shopme.setting;
 
 import com.shopme.admin.entity.setting.Setting;
 import com.shopme.admin.entity.setting.SettingCategory;

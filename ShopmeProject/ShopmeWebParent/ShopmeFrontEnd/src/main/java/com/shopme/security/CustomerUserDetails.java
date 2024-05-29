@@ -1,41 +1,32 @@
-package com.shopme.admin.security;
+package com.shopme.security;
 
-import com.shopme.admin.entity.Role;
-import com.shopme.admin.entity.User;
+import com.shopme.admin.entity.Customer;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
-public class ShopmeUserDetails implements UserDetails {
-    private User user;
 
-    public ShopmeUserDetails(User user) {
-        this.user = user;
+public class CustomerUserDetails implements UserDetails {
+    private Customer customer;
+
+    public CustomerUserDetails(Customer customer) {
+        this.customer = customer;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<Role> roles = user.getRoles();
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        for (Role  role : roles){
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
-        return authorities;
+        return null;
     }
-
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return customer.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return customer.getEmail();
     }
 
     @Override
@@ -55,16 +46,16 @@ public class ShopmeUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabled();
+        return customer.isEnabled();
     }
     public String getFullName(){
-        return user.getFirstName() + " " + user.getLastName();
+        return customer.getFullName();
     }
-    public void setFirstName(String firstName){
-        user.setFirstName(firstName);
-    }
-    public void setLastName(String lastName){
-        user.setLastName(lastName);
+    public void setFullName(String fullName){
+        customer.setFullName(fullName);
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
 }

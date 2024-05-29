@@ -29,6 +29,7 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
+
     public
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
@@ -39,6 +40,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/categories/**").hasAnyAuthority("Admin","Editor")
                         .requestMatchers("/brands/**").hasAnyAuthority("Admin","Editor")
                         .requestMatchers("/products/**").hasAnyAuthority("Admin","Editor","Saleperson","Shipper")
+                        .requestMatchers("/customers/**","/orders/**").hasAnyAuthority("Admin","Saleperson")
                         .anyRequest().authenticated()
         ).formLogin(form->form
                 .loginPage("/login")

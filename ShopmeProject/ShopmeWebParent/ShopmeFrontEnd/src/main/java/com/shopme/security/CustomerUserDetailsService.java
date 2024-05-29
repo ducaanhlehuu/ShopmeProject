@@ -1,7 +1,8 @@
 package com.shopme.security;
 
+import com.shopme.admin.entity.Customer;
 import com.shopme.admin.entity.User;
-import com.shopme.admin.user.UserRepository;
+import com.shopme.customer.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,22 +10,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ShopmeUserDetailsService implements UserDetailsService {
+public class CustomerUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private CustomerRepository repository;
 
-    public ShopmeUserDetailsService() {
+    public CustomerUserDetailsService() {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.getUserByEmail(username);
-        if(user !=null){
-            return new CustomerUserDetails(user);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Customer customer = repository.findCustomerByEmail(email);
+        if(customer !=null){
+            return new CustomerUserDetails(customer);
         }
-        throw new UsernameNotFoundException("Could not found user email:" + username);
+        throw new UsernameNotFoundException("Could not found user email:" + email);
     }
-
 
 }

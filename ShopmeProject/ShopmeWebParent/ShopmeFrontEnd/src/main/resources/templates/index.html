@@ -6,18 +6,18 @@
 <body>
 <div class="container-fluid">
     <div th:replace="~{navigation :: header_menu}"></div>
-<!--    <div th:replace="navigation :: search_nav"></div>-->
+    <div th:replace="~{navigation :: search_nav}"></div>
     <div>
         <h1>Mua hàng với các danh mục hàng</h1>
     </div>
 
     <div class="row">
-        <div class="col" th:each="cat : ${listCategories}">
-            <div>
-                <img th:src="@{${cat.imagePath}}" width="80" />
+        <div class="col-sm-2" th:each="cat : ${listCategories}" >
+            <div style="width:80px; height: 90px;">
+                <img th:src="@{${cat.imagePath}}" width="80px"/>
             </div>
             <div>
-                <a th:href="@{'/c/' + ${cat.alias}}">[[${cat.name}]]</a>
+                <a th:href="@{'/c/' + ${cat.alias}}" class="text-">[[${cat.name}]]</a>
             </div>
         </div>
     </div>

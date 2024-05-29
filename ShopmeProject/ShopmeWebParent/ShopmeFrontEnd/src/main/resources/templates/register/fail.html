@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragment :: page_head(${pageTitile})}" />
+<head th:replace="~{fragment :: page_head(${pageTitle})}" />
 
 <body>
     <div class="container-fluid">
@@ -9,9 +9,9 @@
         <div>&nbsp;</div>
         <div class="text-center">
             <h2>Đăng ký tài khoản</h2>
-            <h4>Bạn đã đăng kí thành công</h4>
-            <p>Hãy kiểm tra tài khoản E-mail của bạn để tiến hành xác thực tài khoản</p>
-            <p><a th:href="@{/login}">Đăng nhập tại đây</a> </p>
+            <p>Xác thực không thành công, vui lòng thử lại</p>
+            <p><a th:href="@{/register}">Đăng ký</a> </p>
+            <p><a th:href="@{/login}">Nếu đã có tài khoản, đăng nhập tại đây</a> </p>
         </div>
         <div>&nbsp;</div>
         <div th:replace="navigation::footer_menu"></div>

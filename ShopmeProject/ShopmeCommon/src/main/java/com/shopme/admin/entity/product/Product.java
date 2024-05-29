@@ -1,7 +1,11 @@
-package com.shopme.admin.entity;
+package com.shopme.admin.entity.product;
 
+import com.shopme.admin.entity.Brand;
+import com.shopme.admin.entity.Category;
 import jakarta.persistence.*;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
 @Entity
@@ -50,7 +54,13 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<ProductDetail> details = new ArrayList<>();
 
-    
+    public Product(Integer id) {
+        this.id = id;
+    }
+
+    public Product() {
+    }
+
     public Integer getId() {
         return id;
     }
@@ -261,5 +271,36 @@ public class Product {
         }
         return name;
     }
+    @Transient
+    public static String formatPrice(float price) {
+        // Định dạng số theo kiểu tiền tệ của Việt Nam
+        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        // Xác định mẫu định dạng
+        DecimalFormat decimalFormat = (DecimalFormat) format;
+        decimalFormat.applyPattern("###,### đ");
+
+        return decimalFormat.format(price);
+    }
+
+    @Transient
+    public String getDiscountPrice(){
+        if(discountPercent>0){
+            return  formatPrice(price * (100 - discountPercent)/100);
+        }
+        return formatPrice(this.price);
+    }
+
+    @Transient
+    public float getDiscountPriceNumber(){
+        if(discountPercent>0){
+            return  price * (100 - discountPercent)/100;
+        }
+        return this.price;
+    }
+    @Transient
+    public String getFormattedPrice(){
+        return formatPrice(this.price);
+    }
 }
+
 

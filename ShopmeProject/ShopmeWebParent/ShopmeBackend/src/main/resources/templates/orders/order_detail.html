@@ -1,0 +1,195 @@
+<div class="modal-header">
+  <h4 class="modal-title">Thông tin đơn hàng</h4>
+  <button type="button" class="close" data-dismiss="modal">&times;</button>
+</div>
+
+<div>
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="overview-tab" data-toggle="tab" href="#overview" role="tab">Tổng quan</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="products-tab" data-toggle="tab" href="#products" role="tab">Sản phẩm</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="shipping-tab" data-toggle="tab" href="#shipping" role="tab">Vận chuyển</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="track-tab" data-toggle="tab" href="#track" role="tab">Theo dõi</a>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active p-3" id="overview" role="tabpanel">
+      <form>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Mã đơn hàng:</label>
+          <div class="col-sm-10">
+            <input type="text" readonly class="form-control" th:value="${order.id}">
+          </div>
+        </div>
+
+        <th:block th:if="${1}">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Khách hàng:</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control" th:value="${order.customer.fullName}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Giá mua:</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control" th:value="${order.productCost}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Giá bán:</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control" th:value="${order.subtotal}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Phí vận chuyển:</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control" th:value="${order.shippingCost}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Thuế:</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control" th:value="${order.tax}">
+            </div>
+          </div>
+        </th:block>
+
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Tổng tiền:</label>
+          <div class="col-sm-10">
+            <input type="text" readonly class="form-control" th:value="${order.total}">
+          </div>
+        </div>
+
+        <th:block th:if="${1}">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+              TOTAL = Subtotal + Shipping Cost + Tax
+            </div>
+          </div>
+        </th:block>
+
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Phương thức thanh toán:</label>
+          <div class="col-sm-10">
+            <span>[[${order.paymentMethod}]]</span>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Trạng thái:</label>
+          <div class="col-sm-10">
+            <span>[[${order.orderStatus}]]</span>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Ngày đặt hàng:</label>
+          <div class="col-sm-10">
+            <div th:replace="fragment :: format_time(${order.orderTime})">Ngày đặt hàng</div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="tab-pane fade p-3" id="products" role="tabpanel">
+      <th:block th:each="detail, status : ${order.orderDetails}">
+        <div class="row border rounded p-1" th:with="product = ${detail.product}">
+          <div class="col-sm-1">
+            <div class="div-count">[[${status.count}]]</div>
+          </div>
+          <div class="col-sm-3"><img th:src="@{${product.mainImagePath}}" class="img-fluid" /></div>
+          <div class="col-sm-8">
+            <div class="text-wrap">
+              <b>[[${product.name}]]</b>
+            </div>
+
+            <th:block th:if="${1}">
+              <div>
+                Giá sản phẩm :  <input type="text" readonly class="form-control" th:value="${detail.productCost}">
+              </div>
+              <div>
+                Giá bán: [[${detail.quantity}]] X
+                <input type="text" readonly class="form-control" th:value="${detail.unitPrice}">
+                =
+                <input type="text" readonly class="form-control" th:value="${detail.subTotal}">
+              </div>
+              <div>
+                Phí vận chuyển:  <input type="text" readonly class="form-control" th:value="${detail.shippingCost}">
+              </div>
+            </th:block>
+          </div>
+        </div>
+      </th:block>
+    </div>
+    <div class="tab-pane fade p-3" id="shipping" role="tabpanel">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Số ngày vận chuyển:</label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control" th:value="${order.deliverDays}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Dữ kiến ngày đến:</label>
+        <div class="col-sm-10">
+          <span th:text="${#dates.format(order.deliverDate, 'E, dd MMM yyyy')}"></span>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Họ và tên:</label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control" th:value="${order.fullName}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Số điện thoại:</label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control" th:value="${order.phoneNumber}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Địa chỉ 1:</label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control" th:value="${order.addressLine1}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Địa chỉ 2:</label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control" th:value="${order.addressLine2}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Tỉnh:</label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control" th:value="${order.province}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Quận / Huyện :</label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control" th:value="${order.district}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Xã / Phường:</label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control" th:value="${order.ward}">
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade p-3" id="track" role="tabpanel">
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+</div>

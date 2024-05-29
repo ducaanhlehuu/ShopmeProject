@@ -6,12 +6,151 @@
     <title>[[${pageTitle}]]</title>
 
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
-
+    <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}">
     <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 
 </head>
 <body>
+    <a th:fragment="page_link(moduleURL,pageNum,label)" class="page-link"
+       th:href="@{${moduleURL} + '/page/' + ${pageNum} +'?sortField='+${sortField}+'&sortDir='
+              + ${sortDir} + ${keyword==null ? '': '&keyword=' + keyword}}">[[${label}]]</a>
 
+    <div th:fragment="content" th:remove="tag">
+        <div
+                th:if="${listCategoryParents != null}">
+            <div class="row">
+                <div class="col">
+                    <nav>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a th:href="@{/}">Home</a>
+                            </li>
+
+                            <th:block th:each="parent : ${listCategoryParents}">
+                                <li class="breadcrumb-item"><a
+                                        th:href="@{'/c/' + ${parent.alias}}">[[${parent.name}]]</a></li>
+                            </th:block>
+
+                            <li class="breadcrumb-item" th:if="${product != null}"><span>[[${product.shorterName}]]</span>
+                            </li>
+
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div th:fragment="pagination(moduleUrl, entityName)" th:remove="tag">
+        <div class="text-center m-1" th:if="${numberOfElements}>0">
+            <span>Hiển thị các sản phẩm #[[${startCount}]] to #[[${endCount}]] of [[${totalItems}]]</span>
+        </div>
+        <div class="text-center m-1" th:if="${numberOfElements}<=0">
+            <span class="fa-2x">Không có sản phẩm nào!</span>
+        </div>
+
+        <nav th:if="${numberOfElements}" aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li th:class="${currentPage<=1 ? 'page-item disabled': 'page-item'}">
+                    <a th:replace="~{fragment::page_link(${moduleUrl},1,'First')}"></a>
+                </li>
+
+                <li th:class="${currentPage<=1 ? 'page-item disabled': 'page-item'}">
+                    <a th:replace="~{fragment::page_link(${moduleUrl}, ${currentPage} - 1,'Preveous')}"></a>
+                </li>
+
+                <li th:class="${index!=currentPage ? 'page-item' : 'active page-item'}" th:each="index : ${#numbers.sequence(1,totalPages)}">
+                    <a th:replace="~{fragment::page_link(${moduleUrl}, ${index},${index})}"></a>
+                </li>
+
+                <li th:class="${currentPage>=totalPages ? 'page-item disabled': 'page-item'}">
+                    <a th:replace="~{fragment::page_link(${moduleUrl}, ${currentPage} + 1,'Next')}"></a>
+                </li>
+                <li th:class="${currentPage>=totalPages ? 'page-item disabled': 'page-item'}">
+                    <a th:replace="~{fragment::page_link(${moduleUrl}, ${totalPages},'Last')}"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div th:fragment="breadcrumb">
+        <div th:if="${listCategoryParents != null}">
+            <div class="row">
+                <div class="col">
+                    <nav>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a th:href="@{/static}">Home</a></li>
+
+                            <th:block th:each="parent : ${listCategoryParents}">
+                                <li class="breadcrumb-item">
+                                    <a th:href="@{'/c/' + ${parent.alias}}">[[${parent.name}]]</a></li>
+                            </th:block>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th th:fragment="modal">
+        <div class="modal fade text-center" id="modalDialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="modalTitle"></h4>
+                        <button type="button"class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <span id="modalBody"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th>
+    <th th:fragment="notification">
+        <div class="modal fade text-center" id="modalDialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="modalTitle"></h4>
+                        <button type="button"class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <span id="modalBody"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Đồng ý</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th>
+    <div th:fragment="confirm_modal" class="modal fade text-center" id="confirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Xác nhận xóa</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <span id="confirmText"></span>
+                </div>
+
+                <div class="modal-footer">
+                    <a class="btn btn-success" href="" id="yesButton">Đồng ý</a>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:fragment="format_money(amount)" th:remove="tag">
+        <input type="text" readonly class="form-control" th:value="${#numbers.formatDecimal(amount, 1, 'COMMA', 0, 'POINT') + ' đ'}">
+    </div>
 </body>
 </html>

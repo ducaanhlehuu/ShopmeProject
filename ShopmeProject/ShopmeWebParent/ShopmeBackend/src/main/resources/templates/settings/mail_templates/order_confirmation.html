@@ -3,31 +3,20 @@
 <body>
 <div th:fragment="content" th:remove="tag">
   &nbsp;
-  <form th:action="@{/settings/save_mail_templates}" method="post">
-    <div>
-      <ul class="nav nav-tabs" id="mailTemplatesTab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" data-toggle="tab" href="#customerVerification" role="tab">Xác thực khách hàng</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#orderConfirmation" role="tab">Xác nhận đơn hàng</a>
-        </li>
-      </ul>
-
-      <div class="tab-content">
-        <div class="tab-pane active p-3" id="customerVerification" role="tabpanel">
-          <div th:replace="settings/mail_templates/customer_verification:: content"></div>
-        </div>
-        <div class="tab-pane p-3" id="orderConfirmation" role="tabpanel">
-          <div th:replace="settings/mail_templates/order_confirmation:: content"></div>
-        </div>
+  <div>
+    <div class="row form-group">
+      <div class="col col-sm-2">Tiêu đề Email: </div>
+      <div class="col-sm-10 col">
+        <input type="text" class="form-control" th:value="${ORDER_CONFIRMATION_SUBJECT}" name="ORDER_CONFIRMATION_SUBJECT" required>
       </div>
     </div>
-
-    <div class="text-center">
-      <input type="submit" value="Save" class="btn btn-primary m-3" />
+    <div class="row form-group">
+      <div class="col col-sm-2">Nội dung Email: </div>
+      <div class="col-sm-10 col">
+        <textarea class="form-control" name="ORDER_CONFIRMATION_CONTENT" required rows="8">[[${ORDER_CONFIRMATION_CONTENT}]]</textarea>
+      </div>
     </div>
-  </form>
+  </div>
 </div>
 </body>
 </html>

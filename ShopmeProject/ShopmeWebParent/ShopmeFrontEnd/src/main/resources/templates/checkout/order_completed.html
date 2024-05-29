@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment :: page_head('ShopDA')" />
+<body>
+<div class="container-fluid">
+  <div th:replace="navigation :: header_menu"></div>
+  <div th:replace="navigation :: search_nav"></div>
+
+  <div class="text-center border border-secondary rounded m-3 p-3">
+    <h2>Đơn hàng của bạn đang được xử lý</h2>
+    <h4>Thư xác nhận đã được gửi cho bạn, vui lòng check Email cá nhân</h4>
+  </div>
+
+  <div th:replace="navigation :: footer_menu"></div>
+</div>
+</body>
+</html>

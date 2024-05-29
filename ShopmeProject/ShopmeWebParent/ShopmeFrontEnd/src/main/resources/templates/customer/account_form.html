@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment :: page_head('Tài khoản của bạn')" />
+<body>
+<div class="container-fluid">
+  <div th:replace="navigation :: header_menu"></div>
+  <div th:replace="navigation :: search_nav"></div>
+  <div>&nbsp;</div>
+
+  <div class="text-center">
+    <h2>Your Account Details</h2>
+  </div>
+  <div>&nbsp;</div>
+
+  <form th:action="@{/update_account_details}" method="post" th:object="${customer}"
+        style="max-width: 600px; margin: 0 auto">
+    <input type="hidden" th:field="*{id}" />
+    <input type="hidden" name="redirect" th:value="${param.redirect}" />
+    <div th:if="${message != null}" class="alert alert-success text-center">
+      [[${message}]]
+    </div>
+    <div class="border border-secondary rounded p-3">
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Kiểu đăng nhập:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{authenticationType}" class="form-control" readonly="readonly"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">E-mail:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{email}" class="form-control" readonly="readonly"/>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Tên:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{fullName}" class="form-control"
+                 required="required" maxlength="45" minlength="2" />
+        </div>
+      </div>
+
+      <th:block th:if="${customer.authenticationType.name() == 'DATABASE'}">
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Mật khẩu:</label>
+          <div class="col-sm-8">
+            <input type="password" th:field="*{password}" class="form-control"
+                   maxlength="15" minlength="6" placeholder="******"
+                   oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"
+            />
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label">Nhập lại mật khẩu:</label>
+          <div class="col-sm-8">
+            <input type="password" id="confirmPassword" class="form-control"
+                   maxlength="15" minlength="6" placeholder="******"
+                   oninput="checkPasswordMatch(this)"
+            />
+          </div>
+        </div>
+      </th:block>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Số điện thoại:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{phoneNumber}" class="form-control"
+                 required="required" maxlength="15" minlength="8" />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Địa chỉ 1:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{addressLine1}" class="form-control"
+                 required="required" maxlength="64" minlength="3" />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Địa chỉ 2 (Nếu có):</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{addressLine2}" class="form-control"
+                 maxlength="64" />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Tỉnh:</label>
+        <div class="col-sm-8">
+          <select class="form-control" id="listProvinces" onchange="updateDistricts(this.options[this.selectedIndex])" required>
+            <option value="0" selected>Chọn tỉnh, thành phố</option>
+          </select>
+          <input type="hidden" th:field="*{provinceId}" id="provinceId" />
+          <input type="hidden" th:field="*{province}" id="provinceName" />
+          &nbsp;
+          <select class="form-control" id="listDistricts" onchange="updateWards(this.options[this.selectedIndex])" required>
+            <option value="0" selected>Chọn quận huyện</option>
+          </select>
+          <input type="hidden" th:field="*{districtId}" id="districtId" />
+          <input type="hidden" th:field="*{district}" id="districtName" />
+          &nbsp;
+          <select class="form-control" id="listWards" required onchange="updateWardFields(this.options[this.selectedIndex])">
+            <option value="0" disabled>Chọn xã, phường, thị trấn</option>
+          </select>
+          <input type="hidden" th:field="*{wardId}" id="wardId" />
+          <input type="hidden" th:field="*{ward}" id="wardName" />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Postal Code:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{postalCode}" class="form-control"
+                 maxlength="10" minlength="2" />
+        </div>
+      </div>
+
+      <div class="text-center">
+        <input type="submit" value="Update" class="btn btn-primary" />
+      </div>
+    </div>
+  </form>
+
+  <div>&nbsp;</div>
+  <div th:replace="navigation :: footer_menu"></div>
+</div>
+<script type="text/javascript">
+  contextPath = "[[@{/}]]";
+  $(document).ready(function (){
+    getProvinces();
+
+  });
+
+  const token = '62bcbe1d-1867-11ef-a9c4-9e9a72686e07';
+  function getProvinces(){
+    fetch('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Token': token
+      }
+    }).then(response => response.json())
+            .then(data => {
+              const provinces = data.data.map(province => {
+                return {
+                  id: province.ProvinceID,
+                  name: province.ProvinceName
+                };
+              });
+              const customerProvinceId = $("#provinceId").val();
+              console.log(customerProvinceId)
+              provinces.forEach(province => {
+                const $option = $("<option></option>")
+                        .attr("value", province.id)
+                        .text(province.name);
+                if (province.id == customerProvinceId) {
+                  $option.attr("selected", "selected");
+                  $("#provinceName").val(province.name);
+                }
+                $("#listProvinces").append($option);
+              });
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+  }
+
+  function updateDistricts(option) {
+    const provinceId = option.value;
+    const provinceName = option.text;
+    $("#provinceId").val(provinceId);
+    $("#provinceName").val(provinceName);
+
+    $("#listDistricts").empty().append('<option value="0" disabled selected>Chọn quận huyện</option>');
+    $("#listWards").empty().append('<option value="0" disabled>Chọn xã, phường, thị trấn</option>');
+
+    fetch(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Token': token
+      },
+    })
+            .then(response => response.json())
+            .then(data => {
+              const districts = data.data.map(district => {
+                return {
+                  id: district.DistrictID,
+                  name: district.DistrictName
+                };
+              });
+              const customerDistrictId = $("#districtId").val();
+              districts.forEach(district => {
+                const $option = $("<option></option>")
+                        .attr("value", district.id)
+                        .text(district.name);
+                if (district.id == customerDistrictId) {
+                  $option.attr("selected", "selected");
+                  $("#districtName").val(district.name);
+                }
+                $("#listDistricts").append($option);
+              });
+            })
+            .catch(error => {
+              console.error('Error fetching districts:', error);
+            });
+  }
+
+  function updateWards(option) {
+    const districtId = option.value;
+    const districtName = option.text;
+    $("#districtId").val(districtId);
+    $("#districtName").val(districtName);
+
+    $("#listWards").empty().append('<option value="0" disabled selected>Chọn xã, phường, thị trấn</option>');
+
+    fetch(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Token': token
+      },
+    })
+            .then(response => response.json())
+            .then(data => {
+              const wards = data.data.map(ward => {
+                return {
+                  id: ward.WardCode,
+                  name: ward.WardName
+                };
+              });
+              const customerWardId = $("#wardId").val()
+              wards.forEach(ward => {
+                const $option = $("<option></option>")
+                        .attr("value", ward.id)
+                        .text(ward.name);
+                if (ward.id == customerWardId) {
+                  $option.attr("selected", "selected");
+                  $("#wardName").val(ward.name);
+                }
+                $("#listWards").append($option);
+              });
+            })
+            .catch(error => {
+              console.error('Error fetching wards:', error);
+            });
+  }
+
+  function updateWardFields(option) {
+    const wardId = option.value;
+    const wardName = option.text;
+    $("#wardId").val(wardId);
+    $("#wardName").val(wardName);
+  }
+</script>
+<script type="text/javascript" th:src="@{/js/common_customer_form.js}"></script>
+</body>
+</html>
+

@@ -1,43 +1,38 @@
-package com.shopme.category;
+package com.shopme.product;
 
-import com.shopme.admin.entity.Category;
+import com.shopme.admin.entity.product.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.NoSuchElementException;
 
 @Service
-public class CategoryService {
+public class ProductService {
     @Autowired
-    private CategoryRepository repo;
+    private ProductRepository  repo;
+    public static final Integer PRODUCTS_PER_PAGE = 5;
+    public static final Integer SEARCH_RESULTS_PER_PAGE = 6;
 
-    public List<Category> listNoChildrenCategories(){
-        final List<Category> listNoChildrenCategories = new ArrayList<Category>();
-        List<Category> listAllEnabledCategories = repo.findAllCategoryEnabled();
-        listAllEnabledCategories.forEach(category ->{
-            Set<Category> children = category.getChildren();
-            if(children==null || children.size()==0){
-                listNoChildrenCategories.add(category);
-            }
-        });
-        return listNoChildrenCategories;
+    public Page<Product> listByPage(Integer pageNum, Integer categoryId){
+        String categoryIdMatch = "-" + categoryId +"-";
+        Pageable pageable = PageRequest.of(pageNum,PRODUCTS_PER_PAGE);
+        return repo.listByCategory(categoryId,categoryIdMatch,pageable);
     }
 
-    public Category findCategoryByAlias(String alias){
-        return repo.findByAliasEnabled(alias);
-    }
-
-    public List<Category> getCategoryParent(Category child){
-        List<Category> parents = new ArrayList<>();
-        Category parent = child.getParent();
-
-        while(parent!=null){
-            parents.add(0,parent);
-            parent = parent.getParent();
+    public Product get(String alias) throws ProductNotFoundException {
+        try {
+            return repo.findByAlias(alias);
+        } catch (NoSuchElementException ex) {
+            throw new ProductNotFoundException("Could not find any product with alias " + alias);
         }
-        parents.add(child);
-        return parents;
     }
+
+    public Page<Product> search(String keyword, int pageNum){
+        Pageable pageable = PageRequest.of(pageNum-1,SEARCH_RESULTS_PER_PAGE);
+        return repo.search(keyword,pageable);
+    }
+
 }

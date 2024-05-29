@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment :: page_head(${pageTitle})" />
+<body>
+<div class="container-fluid">
+  <div th:replace="navigation :: header_menu"></div>
+  <div th:replace="navigation :: search_nav"></div>
+
+  <div class="text-center">
+    <h2>[[${pageTitle}]]</h2>
+  </div>
+  <div>&nbsp;</div>
+
+  <form th:action="@{/address_book/save}" method="post" th:object="${address}"
+        style="max-width: 600px; margin: 0 auto">
+    <input type="hidden" th:field="*{id}" />
+    <input type="hidden" th:field="*{defaultForShipping}" />
+    <input type="hidden" name="redirect" th:value="${param.redirect}" />
+    <div class="border border-secondary rounded p-3">
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Họ và tên:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{fullName}" class="form-control"
+                 required="required" maxlength="45" minlength="2" />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Số điện thoại:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{phoneNumber}" class="form-control"
+                 required="required" maxlength="15" minlength="8" />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Địa chỉ nhà:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{addressLine1}" class="form-control"
+                 required="required" maxlength="64" minlength="3" />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Địa chỉ nhà 2 (Nếu có):</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{addressLine2}" class="form-control"
+                 maxlength="64" />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Tỉnh:</label>
+        <div class="col-sm-8">
+          <select class="form-control" id="listProvinces" onchange="updateDistricts(this.options[this.selectedIndex])" required>
+            <option value="0" selected>Chọn tỉnh, thành phố</option>
+          </select>
+          <input type="hidden" th:field="*{provinceId}" id="provinceId" />
+          <input type="hidden" th:field="*{province}" id="provinceName" />
+          &nbsp;
+          <select class="form-control" id="listDistricts" onchange="updateWards(this.options[this.selectedIndex])" required>
+            <option value="0" selected>Chọn quận huyện</option>
+          </select>
+          <input type="hidden" th:field="*{districtId}" id="districtId" />
+          <input type="hidden" th:field="*{district}" id="districtName" />
+          &nbsp;
+          <select class="form-control" id="listWards" required onchange="updateWardFields(this.options[this.selectedIndex])">
+            <option value="0" disabled>Chọn xã, phường, thị trấn</option>
+          </select>
+          <input type="hidden" th:field="*{wardId}" id="wardId" />
+          <input type="hidden" th:field="*{ward}" id="wardName" />
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Mã bưu điện:</label>
+        <div class="col-sm-8">
+          <input type="text" th:field="*{postalCode}" class="form-control"
+                 required maxlength="10" minlength="2" />
+        </div>
+      </div>
+
+      <div class="text-center">
+        <input type="submit" value="Save" class="btn btn-primary" />
+      </div>
+    </div>
+  </form>
+
+  <div>&nbsp;</div>
+  <div th:replace="navigation :: footer_menu"></div>
+</div>
+<script type="text/javascript">
+  contextPath = "[[@{/}]]";
+  $(document).ready(function (){
+    getProvinces()
+  })
+</script>
+<script type="text/javascript" th:src="@{/js/common_customer_form.js}"></script>
+<script type="text/javascript" th:src="@{/js/provinceApi.js}"></script>
+</body>
+</html>

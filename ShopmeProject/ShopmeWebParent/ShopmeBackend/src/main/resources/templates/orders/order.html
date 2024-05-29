@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment :: page_head('Quản lý đơn hàng - ShopDA Admin')" />
+<body>
+<div class="container-fluid">
+  <div th:replace="navigation :: menu"></div>
+  <div>
+    <h2>Quản lý đơn hàng</h2>
+
+<!--    <a th:href="@{/customers/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>-->
+  </div>
+
+  <div th:if="${message!=null}" class="alert-success alert text-center">
+    [[${message}]]
+  </div>
+  <br>
+
+  <div>
+    <form th:action="@{'/orders/page/1'}" class="form-inline mb-3">
+      Bộ lọc:&nbsp;
+      <input type="search" style="max-width: 200px" name="keyword" id="keyword" th:value="${keyword}" required>
+      &nbsp;&nbsp;
+      <button type="submit" class="btn btn-primary m-1 ">Tìm kiếm</button>
+      &nbsp;&nbsp;
+      <button type="button" class="btn btn-secondary m-1" onclick="clearSearch()">Xóa</button>
+    </form>
+
+  </div>
+
+  <div class="full-details">
+    <table class="table table-bordered table-striped table-hover table-responsive-xl">
+      <thead class="thead-dark">
+      <tr>
+       <th>Id</th>
+        <th>Khách hàng</th>
+        <th>Giá trị đơn hàng</th>
+        <th>Thời gian đặt hàng</th>
+        <th>Địa điểm</th>
+        <th>Thanh toán</th>
+        <th>Trạng thái</th>
+        <th></th>
+
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${listOrders}">
+        <td>[[${order.id}]]</td>
+        <td>[[${order.customer.fullName}]]</td>
+        <td>[[${order.total}]]</td>
+        <td>[[${order.orderTime}]]</td>
+        <td>[[${order.allAddress}]]</td>
+        <td>[[${order.paymentMethod}]]</td>
+        <td>[[${order.orderStatus}]]</td>
+        <td>
+          <a class="fas fa-file-alt fa-2x icon-green linkOrderDetail"
+             th:href="@{'/orders/detail/' + ${order.id}}"
+             title="Xem chi tiết đơn hàng"
+          ></a>
+          &nbsp;
+          <a class="fa-solid fa-pen-to-square fa-2x" th:href="@{'/orders/update/' + ${order.id}}" style="color:darkseagreen" title="Edit this customer"/>
+          &nbsp;
+          <a class="fa fa-trash fa-2x link-delete" th:entityId="${order.id}" th:href="@{'/orders/delete/'+${order.id}}" style="color:gray" />
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div th:replace="fragment::modal_dialog"></div>
+
+  <div class="modal fade" id="orderDetailModal">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>
+
+</div>
+<script type="text/javascript">
+  moduleURL = "[[@{/customers}]]";
+
+  $(document).ready(function() {
+    $(".link-delete").on("click",function (e){
+      let link = $(this);
+      let customerId = link.attr("entityId")
+      e.preventDefault();
+      $("#yesButton").attr("href",link.attr("href"));
+      $("#modalBody").text("Bạn chắc chắn muốn xóa đơn hàng ID: "+ customerId + "?");
+      $("#modalDialog").modal();
+    });
+    handleViewOrderDetails()
+
+  });
+  function handleViewOrderDetails() {
+    $(".linkOrderDetail").on("click", function(e) {
+      e.preventDefault();
+      linkDetailURL = $(this).attr("href");
+      $("#orderDetailModal").modal("show").find(".modal-content").load(linkDetailURL);
+    });
+  }
+  function clearSearch(){
+    window.location = "[[@{/orders}]]";
+  }
+</script>
+</body>
+</html>

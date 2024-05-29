@@ -1,65 +1,45 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragment::page_head(${PageTitle})}">
+<head th:replace="~{fragment::page_head(${'Caì đặt - ShopDA Admin'})}">
 <body>
 <div class="container-fluid">
   <div>
     <div th:replace="~{navigation::menu}"></div>
   </div>
   <div>
-    <h1>Quản lý sản phẩm | [[${PageTitle}]]</h1>
+    <h1>Cài đặt</h1>
   </div>
-  <form th:action="@{/products/save}" method="post"
-        enctype="multipart/form-data"
-        th:object="${product}">
-    <input type="hidden" id="id" th:field="${product.id}">
-    <input th:if="${product.category!= null}" type="hidden" id="category_id" th:value="${product.category.id}">
-    <div>
-      <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active"  data-toggle="tab" href="#overview" role="tab" >Overview</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link"  data-toggle="tab" href="#description" role="tab" >Description</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link"  data-toggle="tab" href="#images" role="tab" >Images</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#details" role="tab" >Details</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#shipping" role="tab" >Shipping</a>
-        </li>
-      </ul>
 
-      <div class="tab-content">
-        <div class="tab-pane active" id="overview" role="tabpanel" >
-          <div th:replace="~{products/product_overview :: content}"></div>
-        </div>
-        <div class="tab-pane" id="description" role="tabpanel" >
-          <div th:replace="~{products/product_description :: content}"></div>
-        </div>
-        <div class="tab-pane" id="images" role="tabpanel">
-          <div th:replace="~{products/product_images :: content}"></div>
-        </div>
-        <div class="tab-pane" id="details" role="tabpanel">
-          <div th:replace="~{products/product_details :: content}"></div>
-          <div>
-            <input type="button" class="btn btn-primary" value="Thêm miêu tả" onclick="addNextDetailSection()">
-          </div>
-        </div>
-        <div class="tab-pane" id="shipping" role="tabpanel">
-          <div th:replace="~{products/product_shipping :: content}"></div>
-        </div>
+  <div th:if="${message != null}" class="alert alert-success text-center">
+    [[${message}]]
+  </div>
+
+  <div>
+    <ul class="nav nav-tabs" id="settingTab" role="tablist">
+      <li class="nav-item ">
+        <a class="nav-link active" data-toggle="tab" href="#mailServer" role="tab"  >Máy chủ Mail</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#mailTemplates" role="tab" >Mẫu email</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#payment" role="tab" >Thanh toán</a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane active" id="mailServer" role="tabpanel">
+        <div th:replace="~{settings/mail_server::content}"></div>
+      </div>
+      <div class="tab-pane" id="mailTemplates" role="tabpanel">
+        <div th:replace="~{settings/mail_templates/mail_templates::content}"></div>
+      </div>
+      <div class="tab-pane" id="payment" role="tabpanel">
+        <div th:replace="~{settings/payment::content}"></div>
       </div>
     </div>
-    <div class="text-center">
-      <input type="submit" value="Save" class="btn btn-info m-3"/>
-      <input type="button" value="Cancel" class="btn btn-secondary" id="buttonCancel"/>
-    </div>
+  </div>
 
-  </form>
 
   <div>
     <p class="text-center"> Shopme Admin Control Panel - Copyright &copy;Shopme</p>
@@ -81,22 +61,5 @@
     </div>
   </div>
 </div>
-<script type="text/javascript">
-    moduleUrl = "[[@{/products}]]"
-    brandModuleUrl = "[[@{/brands}]]"
-    defaultImageThumbnail = "[[@{/images/image-thumbnail.png}]]"
-    $(document).ready(function() {
-      $("#buttonCancel").on("click",function (){
-        window.location ="[[@{/products}]]";
-      });
-    });
-    function showModalDialog(title, message) {
-      $("#modalTitle").text(title);
-      $("#modalBody").text(message);
-      $("#modalDialog").modal();
-    }
-</script>
-<script type="text/javascript" th:src="@{/js/fileUtils.js}"></script>
-<script type="text/javascript" th:src="@{/js/product-form.js}"></script>
 </body>
 </html>

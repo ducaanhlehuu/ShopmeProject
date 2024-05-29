@@ -1,2 +1,6 @@
-package com.shopme.admin.entity;public class AuthenticationType {
+package com.shopme.admin.entity;
+
+public enum AuthenticationType {
+    DATABASE, GOOGLE, FACEBOOK
 }
+

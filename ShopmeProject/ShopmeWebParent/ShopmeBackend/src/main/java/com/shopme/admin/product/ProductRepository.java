@@ -1,6 +1,6 @@
 package com.shopme.admin.product;
 
-import com.shopme.admin.entity.Product;
+import com.shopme.admin.entity.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;

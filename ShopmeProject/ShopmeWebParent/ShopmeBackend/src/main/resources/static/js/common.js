@@ -4,3 +4,8 @@ $(document).ready(function (){
         document.logoutForm.submit();
     })
 })
+function showModalDialog(title, message) {
+    $("#modalTitle").text(title);
+    $("#modalBody").text(message);
+    $("#modalDialog").modal();
+}
